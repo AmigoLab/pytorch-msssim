@@ -24,7 +24,7 @@ img2 = Variable( img2,  requires_grad=True)
 ssim_value = ssim(img1, img2).item()
 print("Initial ssim:", ssim_value)
 
-ssim_loss = SSIM(win_size=11, win_sigma=1.5, data_range=1, size_average=True, channel=1)
+ssim_loss = SSIM(win_size=11, win_sigma=1.5, data_range=1, size_average=True, channels=1)
 
 optimizer = optim.Adam([img2], lr=0.01)
 

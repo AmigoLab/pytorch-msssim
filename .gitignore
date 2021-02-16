@@ -7,3 +7,5 @@ data
 build
 dist
 pytorch_msssim.egg-info
+/venv/
+/.idea/
