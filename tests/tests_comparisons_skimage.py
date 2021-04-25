@@ -30,7 +30,7 @@ if __name__ == '__main__':
     for sigma in range(0, 101, 10):
         noise = sigma * np.random.rand(*img.shape)
         img_noise = (img + noise).astype(np.float32).clip(0,255)
-        
+
         begin = time.time()
         for _ in range(N_repeat):
             ssim_skimage = structural_similarity(img, img_noise, win_size=11, multichannel=True,
@@ -46,8 +46,8 @@ if __name__ == '__main__':
         begin = time.time()
         for _ in range(N_repeat):
             ssim_torch = ssim(img_noise_torch, img_torch, win_size=11, data_range=255)
+            print(ssim_torch)
         time_torch = (time.time()-begin) / N_repeat
-
         ssim_torch = ssim_torch.numpy()
         single_image_ssim.append(ssim_torch)
 
@@ -66,6 +66,3 @@ if __name__ == '__main__':
                       size_average=False, data_range=255)
     assert np.allclose(ssim_batch, single_image_ssim, atol=5e-4)
     print("Pass")
-
-
-

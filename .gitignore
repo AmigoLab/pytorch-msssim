@@ -9,3 +9,4 @@ dist
 pytorch_msssim.egg-info
 /venv/
 /.idea/
+scratch_pad.py
