@@ -18,8 +18,8 @@ from torch.utils import data
 from PIL import Image
 
 class MS_SSIM_Loss(MS_SSIM):
-    def forward(self, img1, img2):
-        return 100*( 1 - super(MS_SSIM_Loss, self).forward(img1, img2) )
+    def forward(self, x, y):
+        return 100*(1 - super(MS_SSIM_Loss, self).forward(x, img2))
 
 class SSIM_Loss(SSIM):
     def forward(self, img1, img2):
@@ -52,15 +52,15 @@ def main():
         transforms.ToTensor()
     ])
 
-    train_loader = data.DataLoader( 
+    train_loader = data.DataLoader(
         data.ConcatDataset([
             ImageDataset(root = 'datasets/data/CLIC/train', transform=train_trainsform),
             ImageDataset(root = 'datasets/data/CLIC/valid', transform=train_trainsform),
         ]), batch_size=opts.batch_size, shuffle=True, num_workers=2, drop_last=True)
-     
-    val_loader = data.DataLoader( 
+
+    val_loader = data.DataLoader(
         ImageDataset( root = 'datasets/data/kodak', transform=val_transform),
-        batch_size=1, shuffle=False, num_workers=1)     
+        batch_size=1, shuffle=False, num_workers=1)
 
     os.environ['CUDA_VISIBLE_DEVICES'] = opts.gpu_id
     device = torch.device( 'cuda' if torch.cuda.is_available() else 'cpu' )
@@ -93,8 +93,8 @@ def main():
             images = images.to(device, dtype=torch.float32)
             optimizer.zero_grad()
             outputs = model(images)
-    
-            loss=criterion(outputs, images) 
+
+            loss=criterion(outputs, images)
             loss.backward()
 
             optimizer.step()
@@ -119,7 +119,7 @@ def main():
 def test(opts, model, val_loader, criterion, device):
     model.eval()
     cur_score = 0.0
-    
+
     metric = ssim if opts.loss_type=='ssim' else ms_ssim
 
     with torch.no_grad():
@@ -135,9 +135,3 @@ def test(opts, model, val_loader, criterion, device):
 
 if __name__=='__main__':
     main()
-
-
-    
-
-
-

@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
         begin = time.perf_counter()
         for _ in range(N_repeat):
-            ssim_torch = ssim(img_noise_torch, img_torch, win_size=11, data_range=255)
+            ssim_torch = ssim(img_noise_torch, img_torch, data_range=255, win_size=11)
 
         time_torch = (time.perf_counter() - begin) / N_repeat
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
         begin = time.perf_counter()
         for _ in range(N_repeat):
-            ssim_torch_3d = ssim(img_noise_torch_3d, img_torch_3d, win_size=11, data_range=255)
+            ssim_torch_3d = ssim(img_noise_torch_3d, img_torch_3d, data_range=255, win_size=11)
 
         time_torch_3d = (time.perf_counter() - begin) / N_repeat
 

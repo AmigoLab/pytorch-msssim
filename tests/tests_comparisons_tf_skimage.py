@@ -4,7 +4,7 @@ import time
 from PIL import Image
 from skimage.metrics import structural_similarity
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['CUDA_VISIBLE_DEVICES']='' # disable CUDA for tf
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     for sigma in range(0, 101, 10):
         noise = sigma * np.random.rand(*img.shape)
         img_noise = (img + noise).astype(np.float32).clip(0,255)
-        
+
         img_tf = tf.expand_dims( tf.convert_to_tensor(img),0 )
         img_noise_tf = tf.expand_dims( tf.convert_to_tensor(img_noise),0 )
         begin = time.time()
@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
         begin = time.time()
         for _ in range(N_repeat):
-            ssim_torch = ssim(img_noise_torch, img_torch, win_size=11, data_range=255)
+            ssim_torch = ssim(img_noise_torch, img_torch, data_range=255, win_size=11)
         time_torch = (time.time()-begin) / N_repeat
 
         ssim_torch = ssim_torch.numpy()
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     print("====> Batch")
     img_batch = torch.cat(img_batch, dim=0)
     img_noise_batch = torch.cat(img_noise_batch, dim=0)
-    ssim_batch = ssim(img_noise_batch, img_batch, win_size=11,size_average=False, data_range=255)
+    ssim_batch = ssim(img_noise_batch, img_batch, data_range=255, size_average=False, win_size=11)
     assert np.allclose(ssim_batch, single_image_ssim, atol=5e-4)
     print("Pass!")
 
@@ -86,7 +86,7 @@ if __name__ == '__main__':
     #   MS-SSIM
     ##########
     print('\n')
-    
+
     img_batch = []
     img_noise_batch = []
     single_image_ssim = []
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     for sigma in range(0, 101, 10):
         noise = sigma * np.random.rand(*img.shape)
         img_noise = (img + noise).astype(np.float32).clip(0,255)
-        
+
         img_batch.append(img)
         img_noise_batch.append(img_noise)
 
@@ -116,7 +116,7 @@ if __name__ == '__main__':
 
         begin = time.time()
         for _ in range(N_repeat):
-            msssim_torch = ms_ssim(img_noise_torch, img_torch, win_size=11, data_range=255)
+            msssim_torch = ms_ssim(img_noise_torch, img_torch, data_range=255, win_size=11)
         time_torch = (time.time()-begin) / N_repeat
 
         msssim_torch = msssim_torch.numpy()
@@ -133,14 +133,10 @@ if __name__ == '__main__':
 
     img_batch = torch.from_numpy(_img_batch).permute(0, 3, 1, 2)
     img_noise_batch = torch.from_numpy(_img_noise_batch).permute(0, 3, 1, 2)
-    msssim_torch_batch = ms_ssim(img_noise_batch, img_batch, win_size=11, size_average=False, data_range=255)
+    msssim_torch_batch = ms_ssim(img_noise_batch, img_batch, data_range=255, size_average=False, win_size=11)
 
     img_batch = tf.convert_to_tensor( _img_batch)
     img_noise_batch = tf.convert_to_tensor(_img_noise_batch)
     msssim_tf_batch = tf.image.ssim_multiscale( img_noise_batch, img_batch, 255, filter_size=11, filter_sigma=1.5, k1=0.01, k2=0.03  )
     assert np.allclose(msssim_torch_batch.numpy().reshape(-1), msssim_tf_batch.numpy().reshape(-1), atol=5e-4)
     print("Pass")
-
-
-
-
